@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura - Mystical Experience</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Griffy&family=MedievalSharp&family=Mystery+Quest&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Quicksand:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at center, #090921 0%, #1a102c 40%, #1f1544 80%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Mystical Background Effects */
+        .mystical-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 20, 147, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.08) 0%, transparent 60%);
+            animation: mysticalPulse 8s ease-in-out infinite;
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent);
+            border-radius: 50%;
+            animation: floatUp 15s linear infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 1s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 3s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 2.5s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 4.5s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 1.5s; }
+
+        /* Main Container */
+        .aura-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 80px 60px;
+            text-align: center;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            animation: containerFloat 6s ease-in-out infinite;
+        }
+
+        .aura-container::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, 
+                rgba(138, 43, 226, 0.6), 
+                rgba(255, 20, 147, 0.4), 
+                rgba(0, 191, 255, 0.3),
+                rgba(138, 43, 226, 0.6)
+            );
+            border-radius: 26px;
+            z-index: -1;
+            animation: borderGlow 4s ease-in-out infinite;
+        }
+
+        /* Mystical Title */
+        .mystical-title {
+            font-family: Arial, sans-serif;
+            font-weight: 900;
+            font-size: 4rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+
+            background: linear-gradient(
+                120deg,
+                #ffb6f9,
+                #b5f8fe,
+                #39eded,
+                #07418e,
+                #97088d
+            );
+            background-size: 400% 400%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: animatedFontGradient 8s ease infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));
+        }
+
+        @keyframes animatedFontGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+
+
+
+
+        /* Welcome Text */
+        .welcome-text {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            animation: textPulse 4s ease-in-out infinite;
+        }
+
+        /* Subtitle */
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        /* Mystical Button */
+        .mystical-btn {
+            background: linear-gradient(135deg, 
+                rgba(138, 43, 226, 0.9) 0%, 
+                rgba(255, 20, 147, 0.8) 50%, 
+                rgba(0, 191, 255, 0.9) 100%
+            );
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            padding: 18px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mystical-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .mystical-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.6);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .mystical-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Ambient Circles */
+        .ambient-circles {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .circle {
+            position: absolute;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            animation: rotate 20s linear infinite;
+        }
+
+        .circle:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            border-color: rgba(255, 20, 147, 0.15);
+            animation: rotate 30s linear infinite reverse;
+        }
+
+        .circle:nth-child(3) {
+            width: 500px;
+            height: 500px;
+            border-color: rgba(0, 191, 255, 0.1);
+            animation: rotate 40s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes mysticalPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes floatUp {
+            0% { 
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { 
+                transform: translateY(-100px) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes containerFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.5));
+            }
+            50% { 
+                filter: drop-shadow(0 0 30px rgba(255, 20, 147, 0.8));
+            }
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes textPulse {
+            0%, 100% { 
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            }
+            50% { 
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+            }
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .aura-container {
+                padding: 50px 30px;
+                margin: 20px;
+            }
+            
+            .mystical-title {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
+            }
+            
+            .welcome-text {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                letter-spacing: 1px;
+            }
+            
+            .mystical-btn {
+                padding: 15px 30px;
+                font-size: 1rem;
+            }
+            
+            .circle:nth-child(1) { width: 250px; height: 250px; }
+            .circle:nth-child(2) { width: 320px; height: 320px; }
+            .circle:nth-child(3) { width: 400px; height: 400px; }
+        }
+
+        @media (max-width: 480px) {
+            .aura-container {
+                padding: 40px 25px;
+            }
+            
+            .mystical-title {
+                font-size: 2rem;
+                letter-spacing: 3px;
+            }
+            
+            .welcome-text {
+                font-size: 1.6rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .mystical-btn {
+                padding: 12px 25px;
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mystical Background -->
+    <div class="mystical-bg"></div>
+
+    <!-- Floating Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="aura-container">
+        <!-- Ambient Circles -->
+        <div class="ambient-circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+
+        <h1 class="mystical-title">AURA</h1>
+        <h2 class="welcome-text">Welcome!</h2>
+        <p class="subtitle">Welcome to the Aura! I am your Assistant</p>
+        <a href="auth.html">
+            <button class="mystical-btn" onclick="enterAura()">Enter Aura Realm</button>
+        </a>
+    </div>
+
+    <script>
+        function enterAura() {
+            const btn = document.querySelector('.mystical-btn');
+            btn.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                btn.style.transform = 'scale(1)';
+                
+                // Create mystical particles on click
+                for (let i = 0; i < 8; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'absolute';
+                    particle.style.width = '6px';
+                    particle.style.height = '6px';
+                    particle.style.background = `radial-gradient(circle, rgba(${138 + Math.random() * 100}, ${43 + Math.random() * 100}, 226, 0.8), transparent)`;
+                    particle.style.borderRadius = '50%';
+                    particle.style.left = '50%';
+                    particle.style.top = '50%';
+                    particle.style.pointerEvents = 'none';
+                    particle.style.zIndex = '1000';
+                    
+                    const angle = (i / 8) * Math.PI * 2;
+                    const distance = 100 + Math.random() * 50;
+                    const x = Math.cos(angle) * distance;
+                    const y = Math.sin(angle) * distance;
+                    
+                    particle.style.transform = `translate(-50%, -50%)`;
+                    particle.style.animation = `particleExplosion 1.5s ease-out forwards`;
+                    
+                    document.body.appendChild(particle);
+                    
+                    setTimeout(() => {
+                        particle.remove();
+                    }, 1500);
+                    
+                    // Animate particle
+                    setTimeout(() => {
+                        particle.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(0)`;
+                        particle.style.opacity = '0';
+                    }, 50);
+                }
+            }, 150);
+        }
+
+        // Mouse movement effect
+        document.addEventListener('mousemove', (e) => {
+            const container = document.querySelector('.aura-container');
+            const circles = document.querySelectorAll('.circle');
+            
+            const x = (e.clientX / window.innerWidth - 0.5) * 10;
+            const y = (e.clientY / window.innerHeight - 0.5) * 10;
+            
+            container.style.transform = `translate(${x}px, ${y}px)`;
+            
+            circles.forEach((circle, index) => {
+                const speed = (index + 1) * 0.5;
+                circle.style.transform = `translate(calc(-50% + ${x * speed}px), calc(-50% + ${y * speed}px)) rotate(${index * 120}deg)`;
+            });
+        });
+
+        // Add dynamic particle explosion animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes particleExplosion {
+                0% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(-50%, -50%) scale(0);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

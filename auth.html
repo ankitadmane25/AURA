@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura - Authentication</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 35%, #0f0f23 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.8) 0%, rgba(75, 0, 130, 0.4) 50%, transparent 100%);
+            border-radius: 50%;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        .particle:nth-child(1) {
+            width: 4px;
+            height: 4px;
+            left: 10%;
+            top: 20%;
+            animation-delay: 0s;
+        }
+
+        .particle:nth-child(2) {
+            width: 6px;
+            height: 6px;
+            left: 70%;
+            top: 10%;
+            animation-delay: 2s;
+        }
+
+        .particle:nth-child(3) {
+            width: 3px;
+            height: 3px;
+            left: 30%;
+            top: 60%;
+            animation-delay: 4s;
+        }
+
+        .particle:nth-child(4) {
+            width: 5px;
+            height: 5px;
+            left: 90%;
+            top: 80%;
+            animation-delay: 6s;
+        }
+
+        .particle:nth-child(5) {
+            width: 4px;
+            height: 4px;
+            left: 15%;
+            top: 90%;
+            animation-delay: 1s;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) scale(1);
+                opacity: 0.7;
+            }
+            25% { 
+                transform: translateY(-20px) translateX(10px) scale(1.2);
+                opacity: 1;
+            }
+            50% { 
+                transform: translateY(-40px) translateX(-5px) scale(0.8);
+                opacity: 0.5;
+            }
+            75% { 
+                transform: translateY(-20px) translateX(-10px) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .auth-container {
+            background: rgba(30, 30, 60, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: 24px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 50px rgba(138, 43, 226, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            position: relative;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            animation: slideIn 0.8s ease-out;
+            z-index: 1;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.6), rgba(75, 0, 130, 0.6), rgba(138, 43, 226, 0.6));
+            border-radius: 26px;
+            z-index: -1;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { opacity: 0.5; }
+            100% { opacity: 0.8; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .logo h1 {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8a2be2, #da70d6, #9370db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            text-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.2); }
+        }
+
+        .logo p {
+            color: #a0a0c0;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: rgba(20, 20, 40, 0.8);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 32px;
+            position: relative;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px 0;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            color: #a0a0c0;
+        }
+
+        .tab-button.active {
+            color: white;
+            text-shadow: 0 0 10px rgba(138, 43, 226, 0.8);
+        }
+
+        .tab-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: linear-gradient(135deg, #8a2be2, #9370db);
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+            z-index: 1;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+        }
+
+        .tab-slider.signup {
+            transform: translateX(100%);
+        }
+
+        .form-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-panel {
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .form-panel.hidden {
+            transform: translateX(20px);
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e0e0f0;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(20, 20, 40, 0.8);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input::placeholder {
+            color: #8080a0;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #8a2be2;
+            box-shadow: 
+                0 0 0 3px rgba(138, 43, 226, 0.2),
+                0 0 20px rgba(138, 43, 226, 0.3);
+            transform: translateY(-1px);
+            background: rgba(30, 30, 60, 0.9);
+        }
+
+        .form-input:hover {
+            border-color: rgba(138, 43, 226, 0.5);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8a2be2, #9370db, #8a2be2);
+            background-size: 200% 200%;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(138, 43, 226, 0.3);
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(138, 43, 226, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.5), transparent);
+        }
+
+        .divider span {
+            padding: 0 16px;
+            color: #a0a0c0;
+            font-size: 14px;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 12px;
+            background: rgba(20, 20, 40, 0.8);
+            color: #e0e0f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-btn:hover {
+            border-color: #8a2be2;
+            background: rgba(30, 30, 60, 0.9);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.2);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .forgot-password a {
+            color: #da70d6;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: #8a2be2;
+            text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.15) 0%, rgba(75, 0, 130, 0.1) 50%, transparent 100%);
+            animation: floatCircle 8s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 180px;
+            height: 180px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            top: 30%;
+            left: 5%;
+            animation-delay: 6s;
+        }
+
+        @keyframes floatCircle {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg) scale(1);
+                opacity: 0.3;
+            }
+            50% { 
+                transform: translateY(-30px) rotate(180deg) scale(1.1);
+                opacity: 0.6;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 20px;
+                padding: 32px 24px;
+            }
+            
+            .logo h1 {
+                font-size: 32px;
+            }
+        }
+
+        /* Enhanced hover effects */
+        .form-group:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        .auth-container:hover::before {
+            animation-duration: 2s;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <div class="auth-container">
+        <div class="logo">
+            <h1>Aura</h1>
+            <p>Welcome to your digital sanctuary</p>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="tab-button active" onclick="switchTab('login')">Login</button>
+            <button class="tab-button" onclick="switchTab('signup')">Sign Up</button>
+            <div class="tab-slider" id="tabSlider"></div>
+        </div>
+
+        <div class="form-container">
+            <!-- Login Form -->
+            <div class="form-panel" id="loginPanel">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginusername">Username</label>
+                        <input type="text" id="loginusername" class="form-input" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Sign In</button>
+                </form>
+
+                <div class="forgot-password">
+                    <a href="#" onclick="forgotPassword()">Forgot your password?</a>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="form-panel hidden" id="signupPanel">
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" class="form-input" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupGender">Gender</label>
+                        <select id="signupGender" class="form-input" required>
+                            <option value="" disabled selected>Select your gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupusername">Username</label>
+                        <input type="text" id="signupusername" class="form-input" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" class="form-input" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBGJnVZh3gQSh4H8n7P2-ATDe7fBs1DJNM",
+            authDomain: "aura2-ed545.firebaseapp.com",
+            projectId: "aura2-ed545",
+            storageBucket: "aura2-ed545.appspot.com",
+            messagingSenderId: "451411923663",
+            appId: "1:451411923663:web:d7c102fa9353b1eeba1dba",
+            measurementId: "G-LDPT0KHFGJ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const dbRef = ref(database);
+
+        // Function to check if username exists
+        async function checkUsernameExists(username) {
+            try {
+                const snapshot = await get(child(dbRef, `users/${username}`));
+                return snapshot.exists();
+            } catch (error) {
+                console.error("Error checking username:", error);
+                return false;
+            }
+        }
+
+        // Function to register a new user
+        async function registerUser(name, gender, username, password) {
+            try {
+                // Check if username already exists
+                const exists = await checkUsernameExists(username);
+                if (exists) {
+                    showErrorMessage("Username already exists. Please choose another one.");
+                    return false;
+                }
+
+                // Create user in database
+                await set(ref(database, 'users/' + username), {
+                    name: name,
+                    gender: gender,
+                    username: username,
+                    password: password // Note: In a real app, you should hash the password
+                });
+
+                return true;
+            } catch (error) {
+                console.error("Error registering user:", error);
+                showErrorMessage("Registration failed. Please try again.");
+                return false;
+            }
+        }
+
+        // Function to authenticate user
+        async function authenticateUser(username, password) {
+            try {
+                const snapshot = await get(child(dbRef, `users/${username}`));
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    if (userData.password === password) {
+                        return { success: true, user: userData };
+                    } else {
+                        return { success: false, message: "Incorrect password" };
+                    }
+                } else {
+                    return { success: false, message: "User not found" };
+                }
+            } catch (error) {
+                console.error("Error authenticating user:", error);
+                return { success: false, message: "Authentication failed" };
+            }
+        }
+
+        // Form submissions
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginusername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const authResult = await authenticateUser(username, password);  // ✅ declare it here!
+
+            if (authResult.success) {
+                showSuccessMessage("Login successful! Redirecting...");
+                await new Promise(r => setTimeout(r, 1000));  // Wait for the message to show
+                location.assign("main.html"); // ✅ works reliably
+            } else {
+                showErrorMessage(authResult.message || "Login failed");
+            }
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const gender = document.getElementById('signupGender').value;
+            const username = document.getElementById('signupusername').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showErrorMessage('Passwords do not match!');
+                return;
+            }
+            
+            if (gender === "") {
+                showErrorMessage('Please select your gender');
+                return;
+            }
+            
+            const registrationSuccess = await registerUser(name, gender, username, password);
+            if (registrationSuccess) {
+                showSuccessMessage('Registration successful! Welcome to Aura, ' + name);
+                // Clear the form
+                document.getElementById('signupForm').reset();
+                // Switch to login tab
+                switchTab('login');
+            }
+        });
+
+        // Helper functions for UI
+        function showSuccessMessage(message) {
+            const alert = document.createElement('div');
+            alert.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #8a2be2, #9370db);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3);
+                z-index: 1000;
+                font-weight: 500;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(138, 43, 226, 0.3);
+            `;
+            alert.textContent = message;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+
+        function showErrorMessage(message) {
+            const alert = document.createElement('div');
+            alert.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #dc2626, #ef4444);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+                z-index: 1000;
+                font-weight: 500;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(220, 38, 38, 0.3);
+            `;
+            alert.textContent = message;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+    </script>
+    <script>
+        window.addEventListener("redirectToDashboard", () => {
+            window.location.href = "main.html";
+        });
+    </script>
+
+
+    <script>
+        let currentTab = 'login';
+
+        function switchTab(tab) {
+            if (currentTab === tab) return;
+
+            const loginPanel = document.getElementById('loginPanel');
+            const signupPanel = document.getElementById('signupPanel');
+            const tabSlider = document.getElementById('tabSlider');
+            const tabButtons = document.querySelectorAll('.tab-button');
+
+            // Update tab slider position
+            if (tab === 'signup') {
+                tabSlider.classList.add('signup');
+            } else {
+                tabSlider.classList.remove('signup');
+            }
+
+            // Update active tab button
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Switch panels with animation
+            if (tab === 'signup') {
+                loginPanel.classList.add('hidden');
+                signupPanel.classList.remove('hidden');
+            } else {
+                signupPanel.classList.add('hidden');
+                loginPanel.classList.remove('hidden');
+            }
+
+            currentTab = tab;
+        }
+
+        function socialLogin(provider) {
+            console.log(`${provider} login attempted`);
+            showSuccessMessage(`${provider} login would be implemented here!`);
+        }
+
+        function forgotPassword() {
+            showSuccessMessage('Password reset functionality would be implemented here!');
+        }
+
+        // Enhanced interactive effects
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.transition = 'all 0.3s ease';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add dynamic particle movement on mouse move
+        document.addEventListener('mousemove', function(e) {
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((particle, index) => {z
+                const speed = (index + 1) * 0.01;
+                const x = (e.clientX * speed) / 100;
+                const y = (e.clientY * speed) / 100;
+                particle.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
